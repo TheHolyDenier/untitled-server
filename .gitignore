@@ -3,5 +3,4 @@ dist
 .turbo
 .idea
 
-api/node_module
-web/node_modules
+.env
