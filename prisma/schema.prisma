@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String          @id @default(cuid()) @map("_id")
+  username      String          @unique
+  email         String          @unique
+  avatar        String?
+  passwordHash  String
+  accessToken   String?         @unique
+  expiresAt     DateTime?       @map("expires_at")
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  projectOnUser ProjectOnUser[] @relation("user")
+
+  @@map("users")
+}
+
+model Project {
+  id            String          @id @default(cuid()) @map("_id")
+  title         String
+  summary       String?
+  cover         String?
+  isFavorite    Boolean?
+  createdById   String
+  createdAt     DateTime        @default(now()) @map("created_at")
+  updatedAt     DateTime        @updatedAt @map("updated_at")
+  elements      Element[]
+  events        Event[]
+  projectOnUser ProjectOnUser[] @relation("project")
+
+  @@map("projects")
+}
+
+model ProjectOnUser {
+  id          String   @id @default(cuid()) @map("_id")
+  createdById String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  userId      String
+  projectId   String
+  project     Project  @relation("project", fields: [projectId], references: [id])
+  user        User     @relation("user", fields: [userId], references: [id])
+
+  @@map("project-on-user")
+}
+
+model Element {
+  id                        String             @id @default(cuid()) @map("_id")
+  name                      String?
+  description               String?
+  cover                     String?
+  isFavorite                Boolean?
+  exists                    Boolean?
+  type                      String?
+  createdById               String
+  createdAt                 DateTime           @default(now()) @map("created_at")
+  updatedAt                 DateTime           @updatedAt @map("updated_at")
+  projectId                 String
+  summary                   String?
+  project                   Project            @relation(fields: [projectId], references: [id])
+  mainElementOnElement      ElementOnElement[] @relation("element")
+  relatesToElementOnElement ElementOnElement[] @relation("relatesToElement")
+  elementsOnEvent           ElementOnEvent[]
+
+  @@map("elements")
+}
+
+model Event {
+  id             String           @id @default(cuid())
+  title          String?
+  description    String?
+  cover          String?
+  startDate      String
+  endDate        String?
+  projectId      String
+  createdById    String
+  createdAt      DateTime         @default(now()) @map("created_at")
+  updatedAt      DateTime         @updatedAt @map("updated_at")
+  elementOnEvent ElementOnEvent[]
+  project        Project          @relation(fields: [projectId], references: [id])
+
+  @@map("events")
+}
+
+model ElementOnElement {
+  id                 String   @id @default(cuid()) @map("_id")
+  createdById        String
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  elementId          String
+  relatesToElementId String
+  element            Element  @relation("element", fields: [elementId], references: [id])
+  relatesToElement   Element  @relation("relatesToElement", fields: [relatesToElementId], references: [id])
+
+  @@map("elements-on-elements")
+}
+
+model ElementOnEvent {
+  id          String   @id @default(cuid()) @map("_id")
+  createdById String
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  elementId   String
+  eventId     String
+  element     Element  @relation(fields: [elementId], references: [id])
+  event       Event    @relation(fields: [eventId], references: [id])
+
+  @@map("elements-on-events")
+}
