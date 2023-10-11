@@ -6,51 +6,50 @@ import { Prisma, Event } from '@prisma/client';
 export class EventsService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(
-    eventUniqueInput: Prisma.EventWhereUniqueInput,
-  ): Promise<Event | null> {
+  async findOne(eventId: string): Promise<Event | null> {
     return this.prisma.event.findUnique({
-      where: eventUniqueInput,
+      where: { id: eventId },
     });
   }
 
-  async find(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.EventWhereUniqueInput;
-    where?: Prisma.EventWhereInput;
-    orderBy?: Prisma.EventOrderByWithRelationInput;
-  }): Promise<Event[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.event.findMany({
-      skip,
-      take,
-      cursor,
+  async find(params: Prisma.EventFindManyArgs): Promise<Event[]> {
+    return this.prisma.event.findMany(params);
+  }
+
+  async count(where?: Prisma.EventWhereInput): Promise<number> {
+    return this.prisma.event.count({
       where,
-      orderBy,
     });
   }
 
-  async create(data: Prisma.EventCreateInput): Promise<Event> {
+  async create(
+    data: Prisma.EventCreateInput,
+    projectId: string,
+    userId: string,
+  ): Promise<Event> {
     return this.prisma.event.create({
-      data,
+      data: Object.assign({}, data, {
+        projectId: projectId,
+        createdById: userId,
+        createdAt: new Date(),
+      }) as Prisma.EventCreateInput,
     });
   }
 
-  async update(params: {
-    where: Prisma.EventWhereUniqueInput;
-    data: Prisma.EventUpdateInput;
-  }): Promise<Event> {
-    const { where, data } = params;
+  async update(
+    eventId: string,
+    data: Prisma.EventUpdateInput,
+    userId: string,
+  ): Promise<Event> {
     return this.prisma.event.update({
-      data,
-      where,
+      data: { ...data, updatedById: userId, updatedAt: new Date() },
+      where: { id: eventId },
     });
   }
 
-  async delete(where: Prisma.EventWhereUniqueInput): Promise<Event> {
+  async delete(eventId: string): Promise<Event> {
     return this.prisma.event.delete({
-      where,
+      where: { id: eventId },
     });
   }
 }

@@ -6,45 +6,43 @@ import { Prisma, Project } from '@prisma/client';
 export class ProjectsService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(
-    projectUniqueInput: Prisma.ProjectWhereUniqueInput,
-  ): Promise<Project | null> {
-    return this.prisma.project.findUnique({
-      where: projectUniqueInput,
+  async findOne(projectId: string, userId: string): Promise<Project | null> {
+    return this.prisma.project.findFirstOrThrow({
+      where: {
+        id: projectId,
+        OR: [
+          { createdById: { equals: userId } },
+          { projectOnUser: { some: { userId: userId } } },
+        ],
+      },
+      include: { projectOnUser: true },
     });
   }
 
-  async find(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ProjectWhereUniqueInput;
-    where?: Prisma.ProjectWhereInput;
-    orderBy?: Prisma.ProjectOrderByWithRelationInput;
-  }): Promise<Project[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.project.findMany({
-      skip,
-      take,
-      cursor,
+  async find(params: Prisma.ProjectFindManyArgs): Promise<Project[]> {
+    return this.prisma.project.findMany(params);
+  }
+
+  async count(where?: Prisma.ProjectWhereInput): Promise<number> {
+    return this.prisma.project.count({
       where,
-      orderBy,
     });
   }
 
-  async create(data: Prisma.ProjectCreateInput): Promise<Project> {
+  async create(data: Prisma.ProjectCreateInput, userId): Promise<Project> {
     return this.prisma.project.create({
-      data,
+      data: { ...data, createdById: userId, createdAt: new Date() },
     });
   }
 
-  async update(params: {
-    where: Prisma.ProjectWhereUniqueInput;
-    data: Prisma.ProjectUpdateInput;
-  }): Promise<Project> {
-    const { where, data } = params;
+  async update(
+    projectId: string,
+    data: Prisma.ProjectUpdateInput,
+    userId: string,
+  ): Promise<Project> {
     return this.prisma.project.update({
-      data,
-      where,
+      data: { ...data, updatedById: userId, updatedAt: new Date() },
+      where: { id: projectId },
     });
   }
 

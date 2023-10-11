@@ -6,51 +6,50 @@ import { Prisma, Element } from '@prisma/client';
 export class ElementsService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(
-    elementUniqueInput: Prisma.ElementWhereUniqueInput,
-  ): Promise<Element | null> {
-    return this.prisma.element.findUnique({
-      where: elementUniqueInput,
+  async findOne(elementId: string): Promise<Element | null> {
+    return this.prisma.element.findFirstOrThrow({
+      where: { id: elementId },
     });
   }
 
-  async find(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ElementWhereUniqueInput;
-    where?: Prisma.ElementWhereInput;
-    orderBy?: Prisma.ElementOrderByWithRelationInput;
-  }): Promise<Element[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.element.findMany({
-      skip,
-      take,
-      cursor,
+  async find(params: Prisma.ElementFindManyArgs): Promise<Element[]> {
+    return this.prisma.element.findMany(params);
+  }
+
+  async count(where?: Prisma.ElementWhereInput): Promise<number> {
+    return this.prisma.element.count({
       where,
-      orderBy,
     });
   }
 
-  async create(data: Prisma.ElementCreateInput): Promise<Element> {
+  async create(
+    data: Prisma.ElementCreateInput,
+    projectId: string,
+    userId: string,
+  ): Promise<Element> {
     return this.prisma.element.create({
-      data,
+      data: Object.assign({}, data, {
+        projectId: projectId,
+        createdById: userId,
+        createdAt: new Date(),
+      }) as Prisma.ElementCreateInput,
     });
   }
 
-  async update(params: {
-    where: Prisma.ElementWhereUniqueInput;
-    data: Prisma.ElementUpdateInput;
-  }): Promise<Element> {
-    const { where, data } = params;
+  async update(
+    elementId: string,
+    data: Prisma.ElementUpdateInput,
+    userId: string,
+  ): Promise<Element> {
     return this.prisma.element.update({
-      data,
-      where,
+      data: { ...data, updatedById: userId, updatedAt: new Date() },
+      where: { id: elementId },
     });
   }
 
-  async delete(where: Prisma.ElementWhereUniqueInput): Promise<Element> {
+  async delete(elementId: string): Promise<Element> {
     return this.prisma.element.delete({
-      where,
+      where: { id: elementId },
     });
   }
 }

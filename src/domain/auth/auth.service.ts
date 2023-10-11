@@ -10,10 +10,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(username: string, pass: string): Promise<any> {
+  async signIn(email: string, pass: string): Promise<any> {
     const user = await this.usersService.findOne({
-      username: username,
+      email: email,
     });
+
+    console.log('tmp', user);
 
     if (!(await this.comparePassword(pass, user?.passwordHash))) {
       throw new UnauthorizedException();
@@ -22,7 +24,10 @@ export class AuthService {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash, ...currentUser } = user;
 
-    return { access_token: await this.jwtService.signAsync(currentUser) };
+    return {
+      accessToken: await this.jwtService.signAsync(currentUser),
+      ...user,
+    };
   }
 
   async updatePassword(userId: string, password: string) {

@@ -24,7 +24,7 @@ export class AuthGuard implements CanActivate {
       request['user'] = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
       });
-    } catch {
+    } catch (e) {
       throw new UnauthorizedException();
     }
     return true;
