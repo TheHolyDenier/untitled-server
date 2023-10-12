@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ElementsService } from '../../elements/elements.service';
 import { ValidateProjectUseCase } from './validate-project.use-case';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class GetElementUseCase {
@@ -9,9 +10,17 @@ export class GetElementUseCase {
     private readonly validateProjectUseCase: ValidateProjectUseCase,
   ) {}
 
-  async execute(projectId: string, userId: string, elementId: string) {
+  async execute(
+    projectId: string,
+    userId: string,
+    elementId: string,
+    query: Prisma.ElementFindFirstOrThrowArgs,
+  ) {
     await this.validateProjectUseCase.execute(projectId, userId);
 
-    return this.elementsService.findOne(elementId);
+    if (!query.where) query.where = {};
+    query.where.id = elementId;
+
+    return this.elementsService.findOne(query);
   }
 }

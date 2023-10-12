@@ -9,6 +9,7 @@ export class QueryPipeline implements PipeTransform {
       where?: any;
       orderBy?: string[];
       select?: string;
+      include?: string;
     } = {},
   ) {
     const query: any = {};
@@ -19,6 +20,7 @@ export class QueryPipeline implements PipeTransform {
     const orderBy = request.orderBy ? [...request.orderBy] : null;
 
     const select = request.select;
+    const include = request.include;
 
     const where = request.where;
 
@@ -31,6 +33,10 @@ export class QueryPipeline implements PipeTransform {
 
     if (select) {
       query.select = JSON.parse(select);
+    }
+
+    if (include) {
+      query.include = JSON.parse(include);
     }
 
     if (where) {

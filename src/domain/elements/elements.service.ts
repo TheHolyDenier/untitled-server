@@ -6,10 +6,10 @@ import { Prisma, Element } from '@prisma/client';
 export class ElementsService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(elementId: string): Promise<Element | null> {
-    return this.prisma.element.findFirstOrThrow({
-      where: { id: elementId },
-    });
+  async findOne(
+    query: Prisma.ElementFindFirstOrThrowArgs,
+  ): Promise<Element | null> {
+    return this.prisma.element.findFirstOrThrow(query);
   }
 
   async find(params: Prisma.ElementFindManyArgs): Promise<Element[]> {

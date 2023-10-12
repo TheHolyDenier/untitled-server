@@ -31,7 +31,8 @@ export class CreateElementOnElementUseCase {
 
     const ids: string[] = [];
     for (const mention of mentions) {
-      ids.push(mention.getAttribute('data-id'));
+      const id = mention.getAttribute('data-id');
+      if (id && !ids.includes(id)) ids.push(id);
     }
 
     return ids;

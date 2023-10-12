@@ -88,8 +88,9 @@ export class ProjectsController {
     @Param('projectId') projectId: string,
     @Param('elementId') elementId: string,
     @Request() { user }: { user: Partial<User> },
+    @Query(QueryPipeline) query: Prisma.ElementFindFirstOrThrowArgs,
   ) {
-    return this.getElementUseCase.execute(projectId, user.id, elementId);
+    return this.getElementUseCase.execute(projectId, user.id, elementId, query);
   }
 
   @HttpCode(HttpStatus.OK)
