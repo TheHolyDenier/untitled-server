@@ -59,6 +59,7 @@ model Element {
   isFavorite                Boolean?
   exists                    Boolean?
   type                      String?
+  tags                      String?
   createdById               String
   createdAt                 DateTime           @default(now()) @map("created_at")
   updatedById               String?

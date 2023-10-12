@@ -93,7 +93,7 @@ export class ProjectsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post(':projectId/elements/:elementId')
+  @Post(':projectId/elements')
   async createElement(
     @Param('projectId') projectId: string,
     @Request() { user }: { user: Partial<User> },
@@ -140,7 +140,7 @@ export class ProjectsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post(':projectId/events/:eventId')
+  @Post(':projectId/events')
   async createEvent(
     @Param('projectId') projectId: string,
     @Request() { user }: { user: Partial<User> },
