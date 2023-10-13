@@ -14,6 +14,7 @@ import { UpdateEventUseCase } from './use-cases/update-event.use-case';
 import { CreateEventUseCase } from './use-cases/create-event.use-case';
 import { EventsService } from '../events/events.service';
 import { CreateElementOnElementUseCase } from './use-cases/create-element-on-element.use-case';
+import { CreateElementOnEventUseCase } from './use-cases/create-element-on-event.use-case';
 
 @Module({
   providers: [
@@ -32,6 +33,7 @@ import { CreateElementOnElementUseCase } from './use-cases/create-element-on-ele
     UpdateEventUseCase,
     CreateEventUseCase,
     CreateElementOnElementUseCase,
+    CreateElementOnEventUseCase,
   ],
   controllers: [ProjectsController],
   exports: [ProjectsService],

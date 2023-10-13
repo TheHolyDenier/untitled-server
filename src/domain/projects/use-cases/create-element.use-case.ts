@@ -22,12 +22,13 @@ export class CreateElementUseCase {
     const element = await this.elementsService.create(data, projectId, userId);
 
     if (data.description) {
-      await this.createElementOnElementUseCase.execute(
+      this.createElementOnElementUseCase.execute(
         element.id,
         userId,
         String(data.description),
       );
     }
+
     return element;
   }
 }

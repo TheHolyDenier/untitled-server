@@ -21,7 +21,7 @@ export class UpdateElementUseCase {
     await this.validateProjectUseCase.execute(projectId, userId);
 
     if (data.description) {
-      await this.createElementOnElementUseCase.execute(
+      this.createElementOnElementUseCase.execute(
         elementId,
         userId,
         String(data.description),
