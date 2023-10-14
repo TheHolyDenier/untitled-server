@@ -19,7 +19,15 @@ export class CreateEventUseCase {
   ) {
     await this.validateProjectUseCase.execute(projectId, userId);
 
-    const event = await this.eventsService.create(data, projectId, userId);
+    const event = await this.eventsService.create(
+      {
+        ...data,
+        startDate: new Date(data.startDate),
+        endDate: data.endDate ? new Date(data.endDate) : null,
+      },
+      projectId,
+      userId,
+    );
 
     if (data.description) {
       this.createElementOnEventUseCase.execute(

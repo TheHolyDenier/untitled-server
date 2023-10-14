@@ -28,6 +28,14 @@ export class UpdateEventUseCase {
       );
     }
 
-    return this.eventsService.update(eventId, data, userId);
+    return this.eventsService.update(
+      eventId,
+      {
+        ...data,
+        startDate: new Date(data.startDate as Date),
+        endDate: data.endDate ? new Date(data.endDate as Date) : null,
+      },
+      userId,
+    );
   }
 }
