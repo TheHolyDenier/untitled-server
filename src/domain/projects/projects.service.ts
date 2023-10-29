@@ -29,7 +29,10 @@ export class ProjectsService {
     });
   }
 
-  async create(data: Prisma.ProjectCreateInput, userId): Promise<Project> {
+  async create(
+    data: Prisma.ProjectCreateInput,
+    userId: string,
+  ): Promise<Project> {
     return this.prisma.project.create({
       data: { ...data, createdById: userId, createdAt: new Date() },
     });

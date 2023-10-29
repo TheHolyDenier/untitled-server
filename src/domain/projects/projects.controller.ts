@@ -169,4 +169,13 @@ export class ProjectsController {
   ) {
     return this.service.findOne(projectId, user.id!);
   }
+
+  @HttpCode(HttpStatus.OK)
+  @Post()
+  async createProject(
+    @Body() data: Prisma.ProjectCreateInput,
+    @Request() { user }: { user: Partial<User> },
+  ) {
+    return this.service.create(data, user.id!);
+  }
 }
