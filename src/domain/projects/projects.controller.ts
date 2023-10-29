@@ -171,6 +171,16 @@ export class ProjectsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Patch(':projectId')
+  async updateProject(
+    @Param('projectId') projectId: string,
+    @Request() { user }: { user: Partial<User> },
+    @Body() data: Prisma.ProjectUpdateInput,
+  ) {
+    return this.service.update(projectId, data, user.id!);
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Post()
   async createProject(
     @Body() data: Prisma.ProjectCreateInput,
